@@ -1,0 +1,53 @@
+# Workflow de sécurité EventEase
+# Conforme référentiel DWWM 2023
+
+name: Security Analysis
+
+on:
+  schedule:
+    - cron: '0 2 * * 1' # Chaque lundi à 2h
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  security-scan:
+    name: Analyse de Sécurité
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout du code
+      uses: actions/checkout@v4
+      
+    - name: Analyse de sécurité avec CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: javascript,typescript
+        
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v3
+      
+    - name: Analyse CodeQL
+      uses: github/codeql-action/analyze@v3
+      
+    - name: Audit des dépendances
+      run: |
+        npm audit --audit-level moderate
+        cd client && npm audit --audit-level moderate
+        cd ../server && npm audit --audit-level moderate
+        
+    - name: Scan des secrets
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        extra_args: --debug --only-verified
+        
+    - name: Analyse des vulnérabilités avec Snyk
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high

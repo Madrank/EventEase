@@ -1,0 +1,266 @@
+# Pipeline CI/CD EventEase - Conforme référentiel DWWM 2023
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_VERSION: '18'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Job de tests
+  test:
+    name: Tests et Qualité du Code
+    runs-on: ubuntu-latest
+    
+    services:
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+    - name: Checkout du code
+      uses: actions/checkout@v4
+      
+    - name: Configuration Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Installation des dépendances racine
+      run: npm ci
+      
+    - name: Installation des dépendances client
+      run: |
+        cd client
+        npm ci
+        
+    - name: Installation des dépendances serveur
+      run: |
+        cd server
+        npm ci
+        
+    - name: Configuration de la base de données de test
+      run: |
+        cd server
+        npx prisma generate
+        npx prisma migrate deploy
+      env:
+        DATABASE_URL: file:./test.db
+        
+    - name: Tests du client
+      run: |
+        cd client
+        npm run test:ci
+      env:
+        CI: true
+        
+    - name: Tests du serveur
+      run: |
+        cd server
+        npm run test:coverage
+      env:
+        DATABASE_URL: file:./test.db
+        REDIS_URL: redis://localhost:6379
+        
+    - name: Tests racine
+      run: npm run test:coverage
+      
+    - name: Linting du client
+      run: |
+        cd client
+        npm run lint
+        
+    - name: Linting du serveur
+      run: |
+        cd server
+        npm run lint
+        
+    - name: Type checking du client
+      run: |
+        cd client
+        npm run type-check
+        
+    - name: Upload des rapports de couverture
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./client/coverage/lcov.info,./server/coverage/lcov.info,./coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+  # Job de build
+  build:
+    name: Build et Tests d'Intégration
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout du code
+      uses: actions/checkout@v4
+      
+    - name: Configuration Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Installation des dépendances
+      run: |
+        npm ci
+        cd client && npm ci
+        cd ../server && npm ci
+        
+    - name: Build du client
+      run: |
+        cd client
+        npm run build
+        
+    - name: Build du serveur
+      run: |
+        cd server
+        npx prisma generate
+        
+    - name: Tests d'intégration
+      run: |
+        npm run test:coverage
+        cd client && npm run test:ci
+        cd ../server && npm run test:coverage
+      env:
+        DATABASE_URL: file:./test.db
+        REDIS_URL: redis://localhost:6379
+
+  # Job de construction des images Docker
+  docker:
+    name: Construction des Images Docker
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Checkout du code
+      uses: actions/checkout@v4
+      
+    - name: Configuration Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Connexion au registre
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Extraction des métadonnées
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+          
+    - name: Construction et push de l'image client
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile.client
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-client:${{ github.sha }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        
+    - name: Construction et push de l'image serveur
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile.server
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-server:${{ github.sha }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  # Job de déploiement
+  deploy:
+    name: Déploiement
+    runs-on: ubuntu-latest
+    needs: [test, build, docker]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    
+    steps:
+    - name: Checkout du code
+      uses: actions/checkout@v4
+      
+    - name: Déploiement du frontend sur Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./client
+        
+    - name: Déploiement du backend sur Railway
+      uses: bervProject/railway-deploy@v1.0.4
+      with:
+        railway-token: ${{ secrets.RAILWAY_TOKEN }}
+        service: eventease-api
+        
+    - name: Notification de déploiement
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      if: always()
+
+  # Job de sécurité
+  security:
+    name: Analyse de Sécurité
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Checkout du code
+      uses: actions/checkout@v4
+      
+    - name: Analyse de sécurité avec CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: javascript,typescript
+        
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v3
+      
+    - name: Analyse CodeQL
+      uses: github/codeql-action/analyze@v3
+      
+    - name: Audit des dépendances
+      run: |
+        npm audit --audit-level moderate
+        cd client && npm audit --audit-level moderate
+        cd ../server && npm audit --audit-level moderate
+        
+    - name: Scan des secrets
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        extra_args: --debug --only-verified

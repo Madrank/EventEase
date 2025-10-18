@@ -1,0 +1,27 @@
+# Docker Compose pour EventEase - Services de support
+# Conforme référentiel DWWM 2023
+
+services:
+  # Cache Redis (optionnel pour les sessions et cache)
+  redis:
+    image: redis:7-alpine
+    container_name: eventease-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - eventease-network
+    restart: unless-stopped
+
+  # Base de données SQLite (fichier partagé)
+  # Note: SQLite utilise un fichier local, pas de conteneur nécessaire
+  # Le fichier dev.db sera créé automatiquement par Prisma
+
+volumes:
+  redis_data:
+
+networks:
+  eventease-network:
+    driver: bridge
+

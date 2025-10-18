@@ -1,0 +1,57 @@
+# Workflow de mise à jour des dépendances EventEase
+# Conforme référentiel DWWM 2023
+
+name: Dependency Updates
+
+on:
+  schedule:
+    - cron: '0 9 * * 1' # Chaque lundi à 9h
+  workflow_dispatch:
+
+jobs:
+  update-dependencies:
+    name: Mise à jour des dépendances
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout du code
+      uses: actions/checkout@v4
+      
+    - name: Configuration Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Mise à jour des dépendances racine
+      run: |
+        npm update
+        npm audit fix --force
+        
+    - name: Mise à jour des dépendances client
+      run: |
+        cd client
+        npm update
+        npm audit fix --force
+        
+    - name: Mise à jour des dépendances serveur
+      run: |
+        cd server
+        npm update
+        npm audit fix --force
+        
+    - name: Créer une Pull Request
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: 'chore: mise à jour des dépendances'
+        title: 'Mise à jour automatique des dépendances'
+        body: |
+          Mise à jour automatique des dépendances npm.
+          
+          - Dépendances racine mises à jour
+          - Dépendances client mises à jour  
+          - Dépendances serveur mises à jour
+          - Corrections de sécurité appliquées
+        branch: dependency-updates
+        delete-branch: true

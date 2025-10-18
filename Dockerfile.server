@@ -1,0 +1,40 @@
+# Dockerfile pour le serveur Node.js EventEase
+# Conforme référentiel DWWM 2023
+
+FROM node:18-alpine
+
+# Créer un utilisateur non-root
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S eventease -u 1001
+
+WORKDIR /app
+
+# Copier les fichiers de configuration
+COPY server/package*.json ./
+
+# Installer les dépendances
+RUN npm ci --only=production && npm cache clean --force
+
+# Copier le code source
+COPY server/ ./
+
+# Générer le client Prisma
+RUN npx prisma generate
+
+# Changer les permissions
+RUN chown -R eventease:nodejs /app
+USER eventease
+
+# Variables d'environnement
+ENV NODE_ENV=production
+ENV PORT=3001
+
+# Exposer le port
+EXPOSE 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node healthcheck.js
+
+# Commande de démarrage
+CMD ["npm", "start"]

@@ -1,0 +1,254 @@
+// Schéma de base de données EventEase
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// Modèle Utilisateur
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  phone     String?
+  avatar    String?
+  role      String   @default("USER")
+  isActive  Boolean  @default(true)
+  emailVerified Boolean @default(false)
+  emailVerificationToken String?
+  passwordResetToken String?
+  passwordResetExpires DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  events    Event[]
+  invitations EventInvitation[]
+  contributions EventContribution[]
+  reviews   Review[]
+  messages  Message[]
+  sessions  Session[]
+
+  @@map("users")
+}
+
+// Rôles utilisateur (USER, ADMIN, MODERATOR)
+
+// Modèle Événement
+model Event {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime?
+  location    String
+  address     String?
+  city        String?
+  postalCode  String?
+  country     String?
+  capacity    Int?
+  budget      Float?
+  status      String      @default("PLANNING")
+  isPublic    Boolean     @default(false)
+  coverImage  String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  organizerId String
+  organizer   User       @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  invitations EventInvitation[]
+  contributions EventContribution[]
+  bookings    Booking[]
+  messages    Message[]
+  reviews     Review[]
+
+  @@map("events")
+}
+
+// Statuts d'événement (PLANNING, PUBLISHED, CANCELLED, COMPLETED)
+
+// Modèle Invitation
+model EventInvitation {
+  id        String           @id @default(cuid())
+  email     String
+  firstName String?
+  lastName  String?
+  status    String           @default("PENDING")
+  message   String?
+  sentAt    DateTime?
+  respondedAt DateTime?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  // Relations
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId  String?
+  user    User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@unique([eventId, email])
+  @@map("event_invitations")
+}
+
+// Statuts d'invitation (PENDING, ACCEPTED, DECLINED, MAYBE)
+
+// Modèle Contribution (Cagnotte)
+model EventContribution {
+  id          String   @id @default(cuid())
+  amount      Float
+  message     String?
+  isAnonymous Boolean  @default(false)
+  status      String             @default("PENDING")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId  String?
+  user    User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("event_contributions")
+}
+
+// Statuts de contribution (PENDING, COMPLETED, CANCELLED, REFUNDED)
+
+// Modèle Prestataire
+model Provider {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  category    String
+  email       String
+  phone       String?
+  website     String?
+  address     String?
+  city        String?
+  postalCode  String?
+  country     String?
+  rating      Float    @default(0)
+  reviewCount Int      @default(0)
+  isVerified  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  logo        String?
+  images      String
+  priceRange  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  bookings Booking[]
+  reviews  Review[]
+
+  @@map("providers")
+}
+
+// Catégories de prestataires (CATERING, PHOTOGRAPHY, MUSIC, DECORATION, VENUE, TRANSPORT, OTHER)
+
+// Modèle Lieu
+model Venue {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  address     String
+  city        String
+  postalCode  String
+  country     String
+  capacity    Int
+  pricePerDay Float?
+  amenities   String
+  images      String
+  rating      Float    @default(0)
+  reviewCount Int      @default(0)
+  isActive    Boolean  @default(true)
+  latitude    Float?
+  longitude   Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  bookings Booking[]
+
+  @@map("venues")
+}
+
+// Modèle Réservation
+model Booking {
+  id        String        @id @default(cuid())
+  startDate DateTime
+  endDate   DateTime?
+  status    String        @default("PENDING")
+  totalPrice Float?
+  notes     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  // Relations
+  eventId   String
+  event     Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  providerId String?
+  provider  Provider? @relation(fields: [providerId], references: [id], onDelete: SetNull)
+  venueId   String?
+  venue     Venue?    @relation(fields: [venueId], references: [id], onDelete: SetNull)
+
+  @@map("bookings")
+}
+
+// Statuts de réservation (PENDING, CONFIRMED, CANCELLED, COMPLETED)
+
+// Modèle Avis
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int      // 1-5
+  comment   String?
+  isPublic  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  eventId    String
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  providerId String?
+  provider   Provider? @relation(fields: [providerId], references: [id], onDelete: SetNull)
+
+  @@unique([eventId, userId])
+  @@map("reviews")
+}
+
+// Modèle Message
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+// Modèle Session (pour la gestion des sessions)
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("sessions")
+}
+

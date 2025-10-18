@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventEase - Votre organisateur d'événements tout-en-un</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #6b46c1 0%, #805ad5 50%, #d53f8c 100%);
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-800">
+    <!-- Animated Background -->
+    <div id="vanta-bg" class="fixed top-0 left-0 w-full h-full -z-10"></div>
+
+    <!-- Navigation -->
+    <nav class="bg-white bg-opacity-90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i data-feather="calendar" class="h-8 w-8 text-purple-600"></i>
+                        <span class="ml-2 text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500">EventEase</span>
+                    </div>
+                </div>
+                <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
+                    <a href="#" class="text-gray-900 hover:text-purple-600 px-3 py-2 text-sm font-medium">Accueil</a>
+                    <a href="#" class="text-gray-500 hover:text-purple-600 px-3 py-2 text-sm font-medium">Fonctionnalités</a>
+                    <a href="#" class="text-gray-500 hover:text-purple-600 px-3 py-2 text-sm font-medium">Prestataires</a>
+                    <a href="#" class="text-gray-500 hover:text-purple-600 px-3 py-2 text-sm font-medium">Tarifs</a>
+                    <a href="#" class="text-gray-500 hover:text-purple-600 px-3 py-2 text-sm font-medium">Contact</a>
+                </div>
+                <div class="flex items-center">
+                    <button class="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:shadow-lg transition-all duration-300">
+                        Essai gratuit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white min-h-screen flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+                        Organisez l'événement parfait <span class="text-yellow-300">sans stress</span>
+                    </h1>
+                    <p class="text-xl md:text-2xl opacity-90 mb-8">
+                        La solution tout-en-un pour créer, gérer et partager vos événements professionnels ou privés en quelques clics.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button class="bg-white text-purple-600 hover:bg-gray-100 px-8 py-4 rounded-full text-lg font-semibold shadow-lg transition-all duration-300">
+                            Commencer maintenant
+                        </button>
+                        <button class="bg-transparent border-2 border-white hover:bg-white hover:bg-opacity-10 px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300">
+                            Voir la démo
+                        </button>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="animate-float">
+                        <img src="http://static.photos/event/1024x576/42" alt="Event planning" class="rounded-2xl shadow-2xl border-8 border-white">
+                    </div>
+                    <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg">
+                        <div class="flex items-center">
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <i data-feather="check" class="h-6 w-6 text-green-600"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-xs text-gray-500">Événement créé</p>
+                                <p class="font-bold text-gray-800">Mariage Sophie & Pierre</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute -top-6 -right-6 bg-white p-4 rounded-xl shadow-lg">
+                        <div class="flex items-center">
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i data-feather="dollar-sign" class="h-6 w-6 text-blue-600"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-xs text-gray-500">Cagnotte</p>
+                                <p class="font-bold text-gray-800">1,250€ collectés</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Tout ce dont vous avez besoin en un seul endroit</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    EventEase combine tous les outils essentiels pour simplifier votre organisation d'événements.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card bg-gray-50 p-8 rounded-xl transition-all duration-300">
+                    <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i data-feather="users" class="h-8 w-8 text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Gestion des invités</h3>
+                    <p class="text-gray-600 mb-4">
+                        Envoyez des invitations par email et SMS, suivez les RSVP et gérez les listes d'invités en temps réel.
+                    </p>
+                    <a href="#" class="text-purple-600 font-medium flex items-center">
+                        En savoir plus <i data-feather="arrow-right" class="ml-2 h-4 w-4"></i>
+                    </a>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card bg-gray-50 p-8 rounded-xl transition-all duration-300">
+                    <div class="bg-pink-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i data-feather="shopping-bag" class="h-8 w-8 text-pink-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Prestataires certifiés</h3>
+                    <p class="text-gray-600 mb-4">
+                        Trouvez et réservez les meilleurs traiteurs, photographes et musiciens avec avis et disponibilités en direct.
+                    </p>
+                    <a href="#" class="text-pink-600 font-medium flex items-center">
+                        En savoir plus <i data-feather="arrow-right" class="ml-2 h-4 w-4"></i>
+                    </a>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card bg-gray-50 p-8 rounded-xl transition-all duration-300">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i data-feather="home" class="h-8 w-8 text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Hébergements</h3>
+                    <p class="text-gray-600 mb-4">
+                        Recherchez des lieux par capacité, équipements et budget avec notre moteur de recherche intelligent.
+                    </p>
+                    <a href="#" class="text-blue-600 font-medium flex items-center">
+                        En savoir plus <i data-feather="arrow-right" class="ml-2 h-4 w-4"></i>
+                    </a>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card bg-gray-50 p-8 rounded-xl transition-all duration-300">
+                    <div class="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i data-feather="dollar-sign" class="h-8 w-8 text-yellow-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Cagnotte collaborative</h3>
+                    <p class="text-gray-600 mb-4">
+                        Collectez des contributions financières avec suivi en temps réel et messages personnalisés.
+                    </p>
+                    <a href="#" class="text-yellow-600 font-medium flex items-center">
+                        En savoir plus <i data-feather="arrow-right" class="ml-2 h-4 w-4"></i>
+                    </a>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card bg-gray-50 p-8 rounded-xl transition-all duration-300">
+                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i data-feather="smartphone" class="h-8 w-8 text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Application mobile</h3>
+                    <p class="text-gray-600 mb-4">
+                        Gérez votre événement en déplacement avec notre application iOS et Android synchronisée en temps réel.
+                    </p>
+                    <a href="#" class="text-green-600 font-medium flex items-center">
+                        En savoir plus <i data-feather="arrow-right" class="ml-2 h-4 w-4"></i>
+                    </a>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card bg-gray-50 p-8 rounded-xl transition-all duration-300">
+                    <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i data-feather="lock" class="h-8 w-8 text-red-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Sécurité RGPD</h3>
+                    <p class="text-gray-600 mb-4">
+                        Vos données sont protégées avec chiffrement de bout en bout et conformité aux réglementations européennes.
+                    </p>
+                    <a href="#" class="text-red-600 font-medium flex items-center">
+                        En savoir plus <i data-feather="arrow-right" class="ml-2 h-4 w-4"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-r from-purple-600 to-pink-500 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Prêt à révolutionner votre organisation d'événements ?</h2>
+            <p class="text-xl opacity-90 mb-8 max-w-3xl mx-auto">
+                Essayez EventEase gratuitement pendant 14 jours. Aucune carte de crédit requise.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button class="bg-white text-purple-600 hover:bg-gray-100 px-8 py-4 rounded-full text-lg font-semibold shadow-lg transition-all duration-300">
+                    Commencer l'essai gratuit
+                </button>
+                <button class="bg-transparent border-2 border-white hover:bg-white hover:bg-opacity-10 px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300">
+                    Voir une démo
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-white text-lg font-semibold mb-4">EventEase</h3>
+                    <p class="mb-4">
+                        La solution tout-en-un pour organiser vos événements en toute simplicité.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i data-feather="facebook" class="h-5 w-5"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i data-feather="twitter" class="h-5 w-5"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i data-feather="instagram" class="h-5 w-5"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i data-feather="linkedin" class="h-5 w-5"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-white text-lg font-semibold mb-4">Produit</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition-colors">Fonctionnalités</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Tarifs</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Applications</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Nouveautés</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white text-lg font-semibold mb-4">Ressources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Centre d'aide</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Tutoriels</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white text-lg font-semibold mb-4">Entreprise</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition-colors">À propos</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Carrières</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Presse</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p>© 2023 EventEase. Tous droits réservés.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white transition-colors">Confidentialité</a>
+                    <a href="#" class="hover:text-white transition-colors">Conditions</a>
+                    <a href="#" class="hover:text-white transition-colors">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </
+</body>
+</html>
