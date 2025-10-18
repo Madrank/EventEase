@@ -30,7 +30,7 @@
     "react-select": "^5.8.0",
     "redux-persist": "^6.0.0",
     "tailwind-merge": "^2.2.0",
-    "zod": "^3.22.4"
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@headlessui/react": "^1.7.17",
