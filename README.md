@@ -206,15 +206,15 @@ Ce projet est sous licence MIT. Voir [LICENSE](./LICENSE) pour plus de détails.
 
 ## 👥 Équipe
 
-- **Développeur Full-Stack** : [Votre nom]
-- **Designer UX/UI** : [Nom du designer]
-- **DevOps** : [Nom DevOps]
+- **Développeur Full-Stack** : JBxDev
+- **Designer UX/UI** : JBxDev
+- **DevOps** : JBxDev
 
 ## 📞 Support
 
 - **Email** : support@eventease.com
 - **Documentation** : https://docs.eventease.com
-- **Issues** : https://github.com/votre-username/eventease/issues
+- **Issues** : https://github.com/Madrank/eventease/issues
 
 ---
 
