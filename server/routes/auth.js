@@ -39,10 +39,8 @@ const loginValidation = [
   body("password").notEmpty().withMessage("Mot de passe requis"),
 ];
 
-/**
- * POST /api/auth/register
- * Inscription d'un nouvel utilisateur
- */
+/* Inscription d'un nouvel utilisateur*/
+
 router.post(
   "/register",
   registerValidation,

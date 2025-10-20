@@ -166,6 +166,3 @@ module.exports = {
   asyncHandler,
 };
 
-if (existing.organizerId !== req.user.id && req.user.role !== "ADMIN") {
-  return res.status(403).json({ message: "Forbidden" });
-}

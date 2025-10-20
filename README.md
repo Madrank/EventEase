@@ -42,10 +42,26 @@ EventEase est une application web complète pour l'organisation d'événements, 
 ### Prérequis
 - Node.js 18+
 - npm 8+
-- PostgreSQL 14+
-- Redis 6+
+- Docker Desktop (optionnel, pour Redis)
 
-### Installation
+### 🎯 Démarrage rapide (UNE SEULE COMMANDE)
+
+**Windows :**
+```cmd
+start-app.bat
+```
+
+**PowerShell :**
+```powershell
+.\start-app.ps1
+```
+
+**Linux/Mac :**
+```bash
+./start-app.sh
+```
+
+### Installation manuelle
 
 1. **Cloner le repository**
 ```bash
@@ -71,7 +87,7 @@ cp client/.env.example client/.env
 4. **Démarrer la base de données**
 ```bash
 # Avec Docker Compose
-docker-compose up -d postgres redis
+docker-compose up -d
 
 # Ou installer PostgreSQL et Redis localement
 ```

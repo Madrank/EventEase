@@ -1,6 +1,5 @@
-/**
- * Page des lieux
- * Conforme référentiel DWWM 2023
+/*
+ Page des lieux
  */
 
 import React, { useEffect, useState } from "react";
