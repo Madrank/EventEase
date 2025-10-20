@@ -1,6 +1,4 @@
 # Dockerfile pour le serveur Node.js EventEase
-# Conforme référentiel DWWM 2023
-
 FROM node:18-alpine
 
 # Créer un utilisateur non-root

@@ -1,0 +1,586 @@
+{
+  "info": {
+    "name": "EventEase API Collection",
+    "description": "Collection complète pour tester l'API EventEase - Conforme référentiel DWWM 2023",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 Authentification",
+      "item": [
+        {
+          "name": "Inscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"firstName\": \"Jean\",\n  \"lastName\": \"Dupont\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Connexion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data.token) {",
+                  "        pm.collectionVariables.set('token', response.data.token);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "👥 Utilisateurs",
+      "item": [
+        {
+          "name": "GET - Profil utilisateur",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "profile"]
+            }
+          }
+        },
+        {
+          "name": "PUT - Mettre à jour profil",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Jean-Michel\",\n  \"lastName\": \"Dupont\",\n  \"phone\": \"0987654321\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "profile"]
+            }
+          }
+        },
+        {
+          "name": "DELETE - Supprimer compte",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🎉 Événements",
+      "item": [
+        {
+          "name": "POST - Créer événement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Anniversaire de mariage\",\n  \"description\": \"Célébration de notre 10ème anniversaire de mariage\",\n  \"date\": \"2024-06-15T18:00:00.000Z\",\n  \"location\": \"Château de Versailles\",\n  \"maxGuests\": 50,\n  \"budget\": 5000,\n  \"category\": \"PERSONAL\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/events",
+              "host": ["{{baseUrl}}"],
+              "path": ["events"]
+            }
+          }
+        },
+        {
+          "name": "GET - Tous les événements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/events",
+              "host": ["{{baseUrl}}"],
+              "path": ["events"]
+            }
+          }
+        },
+        {
+          "name": "GET - Événement par ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/events/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["events", "1"]
+            }
+          }
+        },
+        {
+          "name": "PUT - Mettre à jour événement",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Anniversaire de mariage - Mise à jour\",\n  \"description\": \"Célébration de notre 10ème anniversaire de mariage avec plus d'invités\",\n  \"maxGuests\": 75,\n  \"budget\": 7500\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/events/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["events", "1"]
+            }
+          }
+        },
+        {
+          "name": "DELETE - Supprimer événement",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/events/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["events", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏢 Prestataires",
+      "item": [
+        {
+          "name": "POST - Créer prestataire",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Traiteur Deluxe\",\n  \"description\": \"Service de traiteur haut de gamme pour tous vos événements\",\n  \"category\": \"CATERING\",\n  \"email\": \"contact@traiteur-deluxe.com\",\n  \"phone\": \"0123456789\",\n  \"address\": \"123 Rue de la Gastronomie\",\n  \"city\": \"Paris\",\n  \"postalCode\": \"75001\",\n  \"priceRange\": \"HIGH\",\n  \"rating\": 4.8\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/providers",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers"]
+            }
+          }
+        },
+        {
+          "name": "GET - Tous les prestataires",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/providers",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers"]
+            }
+          }
+        },
+        {
+          "name": "GET - Prestataire par ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/providers/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "1"]
+            }
+          }
+        },
+        {
+          "name": "PUT - Mettre à jour prestataire",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Traiteur Deluxe Premium\",\n  \"description\": \"Service de traiteur ultra haut de gamme\",\n  \"priceRange\": \"PREMIUM\",\n  \"rating\": 4.9\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/providers/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "1"]
+            }
+          }
+        },
+        {
+          "name": "DELETE - Supprimer prestataire",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/providers/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏛️ Lieux",
+      "item": [
+        {
+          "name": "POST - Créer lieu",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Château de Versailles\",\n  \"description\": \"Magnifique château historique pour vos événements d'exception\",\n  \"address\": \"Place d'Armes\",\n  \"city\": \"Versailles\",\n  \"postalCode\": \"78000\",\n  \"capacity\": 200,\n  \"pricePerDay\": 5000,\n  \"amenities\": [\"Parking\", \"Cuisine\", \"Jardin\", \"Salle de réception\"],\n  \"latitude\": 48.8049,\n  \"longitude\": 2.1204\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues"]
+            }
+          }
+        },
+        {
+          "name": "GET - Tous les lieux",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues"]
+            }
+          }
+        },
+        {
+          "name": "GET - Lieu par ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/venues/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues", "1"]
+            }
+          }
+        },
+        {
+          "name": "PUT - Mettre à jour lieu",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Château de Versailles - Salle des Glaces\",\n  \"capacity\": 150,\n  \"pricePerDay\": 6000,\n  \"amenities\": [\"Parking\", \"Cuisine\", \"Jardin\", \"Salle de réception\", \"Climatisation\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/venues/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues", "1"]
+            }
+          }
+        },
+        {
+          "name": "DELETE - Supprimer lieu",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/venues/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔍 Recherches et Filtres",
+      "item": [
+        {
+          "name": "GET - Événements avec filtres",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/events?category=PERSONAL&minBudget=1000&maxBudget=10000",
+              "host": ["{{baseUrl}}"],
+              "path": ["events"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "PERSONAL"
+                },
+                {
+                  "key": "minBudget",
+                  "value": "1000"
+                },
+                {
+                  "key": "maxBudget",
+                  "value": "10000"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET - Prestataires par catégorie",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/providers?category=CATERING&priceRange=HIGH",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "CATERING"
+                },
+                {
+                  "key": "priceRange",
+                  "value": "HIGH"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET - Lieux par capacité",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/venues?minCapacity=50&maxCapacity=200",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues"],
+              "query": [
+                {
+                  "key": "minCapacity",
+                  "value": "50"
+                },
+                {
+                  "key": "maxCapacity",
+                  "value": "200"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏥 Santé et Info",
+      "item": [
+        {
+          "name": "GET - Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:3001/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3001",
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "GET - API Info",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:3001/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3001",
+              "path": ["api"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

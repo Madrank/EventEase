@@ -28,7 +28,7 @@ const authenticateToken = async (req, res, next) => {
     }
 
     // Vérifier le token JWT
-    const jwt = require("jsonwebtoken");
+    const jwt = require("jsonwecrtoken");
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Vérifier que l'utilisateur existe
