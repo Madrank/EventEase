@@ -94,7 +94,7 @@ jobs:
         npm run type-check
         
     - name: Upload des rapports de couverture
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       with:
         files: ./client/coverage/lcov.info,./server/coverage/lcov.info,./coverage/lcov.info
         flags: unittests
