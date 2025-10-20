@@ -190,6 +190,3 @@ async function seedData() {
     await prisma.$disconnect();
   }
 }
-
-// Exécuter le seeding
-seedData();
