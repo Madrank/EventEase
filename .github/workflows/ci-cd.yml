@@ -31,7 +31,7 @@ jobs:
 
     steps:
     - name: Checkout du code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Configuration Node.js
       uses: actions/setup-node@v4
@@ -109,7 +109,7 @@ jobs:
     
     steps:
     - name: Checkout du code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Configuration Node.js
       uses: actions/setup-node@v4
@@ -151,7 +151,7 @@ jobs:
     
     steps:
     - name: Checkout du code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Configuration Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -206,7 +206,7 @@ jobs:
     
     steps:
     - name: Checkout du code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Déploiement du frontend sur Vercel
       uses: amondnet/vercel-action@v25
@@ -238,7 +238,7 @@ jobs:
     
     steps:
     - name: Checkout du code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Analyse de sécurité avec CodeQL
       uses: github/codeql-action/init@v3
