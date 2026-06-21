@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
-    "build": "./node_modules/.bin/prisma generate && npx tsc",
+    "build": "npx prisma generate && npx tsc",
     "start": "npx prisma db push && node dist/app.js",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch --passWithNoTests",
