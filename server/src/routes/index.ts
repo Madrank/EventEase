@@ -59,6 +59,17 @@ router.get('/debug-auth', async (_req, res) => {
   }
 });
 
+router.post('/debug-login', async (req, res) => {
+  try {
+    const { authService } = require('../services/auth.service');
+    const { email, password } = req.body;
+    const result = await authService.login(email, password);
+    res.json({ success: true, result: { ...result, token: result.token?.slice(0, 20) + '...' } });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message, stack: e.stack, name: e.name });
+  }
+});
+
 router.post('/seed', async (_req, res, next) => {
   try {
     await prisma.notification.deleteMany();
