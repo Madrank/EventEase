@@ -48,6 +48,20 @@ router.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+router.get('/debug-auth', async (_req, res) => {
+  try {
+    const bcrypt = require('bcryptjs');
+    const jwt = require('jsonwebtoken');
+    const hash = await bcrypt.hash('test', 4);
+    const compare = await bcrypt.compare('test', hash);
+    const token = jwt.sign({ test: true }, 'debug-secret', { expiresIn: '1h' });
+    const users = await prisma.user.findMany({ select: { id: true, email: true } });
+    res.json({ bcrypt: { hash: !!hash, compare }, jwt: !!token, users });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message, stack: e.stack });
+  }
+});
+
 router.post('/seed', async (_req, res, next) => {
   try {
     await prisma.notification.deleteMany();
