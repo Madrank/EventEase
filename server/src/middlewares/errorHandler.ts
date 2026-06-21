@@ -26,6 +26,8 @@ export function errorHandler(err: Error | AppError, _req: Request, res: Response
 
   res.status(500).json({
     error: 'Erreur interne du serveur',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    message: err.message,
+    name: err.name,
+    stack: err.stack?.split('\n').slice(0, 3).join('\n'),
   });
 }
