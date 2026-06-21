@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
-    "build": "prisma generate && tsc",
+    "build": "./node_modules/.bin/prisma generate && npx tsc",
     "start": "npx prisma db push && node dist/app.js",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch --passWithNoTests",
@@ -12,6 +12,7 @@
     "lint": "eslint src --ext .ts",
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
+    "db:seed:prod": "node dist/seed.js",
     "db:reset": "prisma migrate reset --force",
     "db:generate": "prisma generate"
   },
