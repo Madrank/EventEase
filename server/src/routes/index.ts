@@ -8,8 +8,6 @@ import contributionRoutes from './contribution.routes';
 import notificationRoutes from './notification.routes';
 import paymentRoutes from './payment.routes';
 import uploadRoutes from './upload.routes';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { authenticate } from '../middlewares/auth';
 import { prisma } from '../config/database';
 
@@ -47,20 +45,6 @@ router.get('/my-bookings', authenticate, async (req: any, res, next) => {
 
 router.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-router.get('/debug-auth', async (_req, res) => {
-  try {
-    const { authService } = require('../services/auth.service');
-    const result = await authService.login('admin@eventease.com', 'password123');
-    res.json({ success: true, result: { ...result, token: result.token?.slice(0, 20) + '...' } });
-  } catch (e: any) {
-    res.status(500).json({ error: e.message, stack: e.stack, name: e.name, constructor: e.constructor?.name });
-  }
-});
-
-router.post('/debug-login', (req, res) => {
-  res.json({ headers: req.headers, body: req.body });
 });
 
 router.post('/seed', async (_req, res, next) => {

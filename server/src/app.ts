@@ -9,6 +9,7 @@ import { config } from './config';
 import { logger } from './config/logger';
 import { connectDatabase } from './config/database';
 import { errorHandler } from './middlewares/errorHandler';
+import { paymentController } from './controllers/payment.controller';
 import routes from './routes';
 
 const app = express();
@@ -33,7 +34,7 @@ app.use(cors({
 app.use(compression());
 
 // Stripe webhook needs raw body — must be before JSON parser
-app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
+app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), paymentController.webhook.bind(paymentController));
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
