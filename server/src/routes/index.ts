@@ -51,15 +51,11 @@ router.get('/health', (_req, res) => {
 
 router.get('/debug-auth', async (_req, res) => {
   try {
-    const { config } = require('../config');
-    const user = await prisma.user.findUnique({ where: { email: 'admin@eventease.com' } });
-    if (!user) return res.json({ error: 'User not found' });
-    const isValid = await bcrypt.compare('password123', user.password);
-    const token = jwt.sign({ userId: user.id, role: user.role }, config.jwt.secret, { expiresIn: config.jwt.expiresIn });
-    const decoded = jwt.verify(token, config.jwt.secret);
-    res.json({ userFound: true, isValid, token: !!token, decoded, config: { secret: config.jwt.secret?.slice(0, 10) + '...', expiresIn: config.jwt.expiresIn } });
+    const { authService } = require('../services/auth.service');
+    const result = await authService.login('admin@eventease.com', 'password123');
+    res.json({ success: true, result: { ...result, token: result.token?.slice(0, 20) + '...' } });
   } catch (e: any) {
-    res.status(500).json({ error: e.message, stack: e.stack, name: e.name });
+    res.status(500).json({ error: e.message, stack: e.stack, name: e.name, constructor: e.constructor?.name });
   }
 });
 
