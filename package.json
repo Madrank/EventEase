@@ -3,33 +3,16 @@
   "version": "1.0.0",
   "description": "EventEase - Organisateur d'événements",
   "private": true,
-  "workspaces": [
-    "client",
-    "server"
-  ],
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "npm run dev --workspace=server",
-    "client": "npm start --workspace=client",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm start",
     "build": "cd server && npm install && npx prisma generate && npx tsc",
     "start": "cd server && npx prisma db push && node dist/app.js",
-    "test": "npm run test --workspace=server && npm run test --workspace=client",
-    "test:watch": "concurrently \"npm run test:watch --workspace=server\" \"npm run test:watch --workspace=client\"",
-    "test:coverage": "npm run test:coverage --workspace=server && npm run test:coverage --workspace=client",
-    "test:e2e": "npm run test:e2e --workspace=client",
-    "lint": "npm run lint --workspace=server && npm run lint --workspace=client",
-    "db:migrate": "npm run db:migrate --workspace=server",
-    "db:seed": "npm run db:seed --workspace=server",
-    "db:reset": "npm run db:reset --workspace=server"
+    "test": "cd server && npm test",
+    "build:client": "cd client && npm run build"
   },
   "devDependencies": {
-    "@types/multer": "^2.1.0",
-    "@types/uuid": "^10.0.0",
     "concurrently": "^8.2.2"
-  },
-  "dependencies": {
-    "multer": "^2.2.0",
-    "stripe": "^22.2.2",
-    "uuid": "^14.0.1"
   }
 }
