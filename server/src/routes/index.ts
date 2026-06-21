@@ -8,6 +8,7 @@ import contributionRoutes from './contribution.routes';
 import notificationRoutes from './notification.routes';
 import paymentRoutes from './payment.routes';
 import uploadRoutes from './upload.routes';
+import bcrypt from 'bcryptjs';
 import { authenticate } from '../middlewares/auth';
 import { prisma } from '../config/database';
 
