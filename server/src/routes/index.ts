@@ -59,14 +59,8 @@ router.get('/debug-auth', async (_req, res) => {
   }
 });
 
-router.post('/debug-login', async (req, res) => {
-  try {
-    const { authService } = require('../services/auth.service');
-    const { email, password } = req.body;
-    res.json({ body: req.body, email, password, bodyType: typeof req.body });
-  } catch (e: any) {
-    res.status(500).json({ error: e.message, stack: e.stack, name: e.name, msg: 'Error in debug-login' });
-  }
+router.post('/debug-login', (req, res) => {
+  res.json({ headers: req.headers, body: req.body });
 });
 
 router.post('/seed', async (_req, res, next) => {
