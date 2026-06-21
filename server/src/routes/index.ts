@@ -9,6 +9,7 @@ import notificationRoutes from './notification.routes';
 import paymentRoutes from './payment.routes';
 import uploadRoutes from './upload.routes';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import { authenticate } from '../middlewares/auth';
 import { prisma } from '../config/database';
 
@@ -50,8 +51,12 @@ router.get('/health', (_req, res) => {
 
 router.get('/debug-auth', async (_req, res) => {
   try {
+    const hash = await bcrypt.hash('password123', 12);
+    const compare = await bcrypt.compare('password123', hash);
+    const token = jwt.sign({ userId: 'test', role: 'ADMIN' }, 'secret');
+    const verify = jwt.verify(token, 'secret');
     const users = await prisma.user.findMany({ select: { id: true, email: true } });
-    res.json({ users });
+    res.json({ bcrypt: { hash: !!hash, compare }, jwt: { token: !!token, verify: !!verify }, users });
   } catch (e: any) {
     res.status(500).json({ error: e.message, stack: e.stack, name: e.name });
   }
