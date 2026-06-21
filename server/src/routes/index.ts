@@ -63,10 +63,9 @@ router.post('/debug-login', async (req, res) => {
   try {
     const { authService } = require('../services/auth.service');
     const { email, password } = req.body;
-    const result = await authService.login(email, password);
-    res.json({ success: true, result: { ...result, token: result.token?.slice(0, 20) + '...' } });
+    res.json({ body: req.body, email, password, bodyType: typeof req.body });
   } catch (e: any) {
-    res.status(500).json({ error: e.message, stack: e.stack, name: e.name });
+    res.status(500).json({ error: e.message, stack: e.stack, name: e.name, msg: 'Error in debug-login' });
   }
 });
 
