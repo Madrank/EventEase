@@ -1,0 +1,11 @@
+{
+  "short_name": "EventEase",
+  "name": "EventEase - Organisateur d'événements",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#7c3aed",
+  "background_color": "#ffffff",
+  "description": "Application complète pour l'organisation d'événements",
+  "lang": "fr-FR"
+}

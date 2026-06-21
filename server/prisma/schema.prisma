@@ -1,0 +1,234 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ORGANIZER
+  ADMIN
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  COMPLETED
+}
+
+enum GuestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  MAYBE
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum ContributionStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  GUEST_RSVP
+  CONTRIBUTION
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  avatar    String?
+  phone     String?
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events        Event[]
+  contributions Contribution[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model Event {
+  id          String      @id @default(uuid())
+  title       String
+  description String
+  category    String?
+  date        DateTime
+  endDate     DateTime?
+  location    String?
+  address     String?
+  city        String?
+  postalCode  String?
+  country     String?     @default("France")
+  latitude    Float?
+  longitude   Float?
+  capacity    Int?
+  budget      Float?
+  image       String?
+  status      EventStatus @default(DRAFT)
+  organizerId String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  organizer             User                   @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  guests                Guest[]
+  contributions         Contribution[]
+  providers             Booking[]
+  accommodationBookings AccommodationBooking[]
+  notifications         Notification[]
+
+  @@map("events")
+}
+
+model Guest {
+  id          String      @id @default(uuid())
+  eventId     String
+  email       String
+  firstName   String?
+  lastName    String?
+  phone       String?
+  status      GuestStatus @default(PENDING)
+  respondedAt DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, email])
+  @@map("guests")
+}
+
+model Provider {
+  id          String   @id @default(uuid())
+  name        String
+  category    String
+  description String?
+  email       String?
+  phone       String?
+  website     String?
+  city        String?
+  priceRange  String?
+  rating      Float?   @default(0)
+  image       String?
+  available   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  bookings Booking[]
+
+  @@map("providers")
+}
+
+model Booking {
+  id         String        @id @default(uuid())
+  eventId    String?
+  providerId String
+  userId     String?
+  status     BookingStatus @default(PENDING)
+  price      Float?
+  notes      String?
+  date       DateTime?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  event    Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@map("bookings")
+}
+
+model Accommodation {
+  id            String   @id @default(uuid())
+  name          String
+  type          String
+  description   String?
+  address       String?
+  city          String?
+  postalCode    String?
+  country       String?  @default("France")
+  capacity      Int
+  pricePerNight Float?
+  image         String?
+  amenities     String?
+  available     Boolean  @default(true)
+  latitude      Float?
+  longitude     Float?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  bookings AccommodationBooking[]
+
+  @@map("accommodations")
+}
+
+model AccommodationBooking {
+  id              String        @id @default(uuid())
+  accommodationId String
+  eventId         String?
+  userId          String
+  checkIn         DateTime?
+  checkOut        DateTime?
+  status          BookingStatus @default(PENDING)
+  guests          Int           @default(1)
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  accommodation Accommodation @relation(fields: [accommodationId], references: [id], onDelete: Cascade)
+  event         Event?        @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  @@map("accommodation_bookings")
+}
+
+model Contribution {
+  id        String             @id @default(uuid())
+  eventId   String
+  userId    String
+  amount    Float
+  message   String?
+  status    ContributionStatus @default(PENDING)
+  anonymous Boolean            @default(false)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("contributions")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  eventId   String?
+  title     String
+  message   String
+  read      Boolean          @default(false)
+  type      NotificationType @default(INFO)
+  createdAt DateTime         @default(now())
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event? @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  @@map("notifications")
+}
