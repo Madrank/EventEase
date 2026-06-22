@@ -11,6 +11,7 @@ import uploadRoutes from './upload.routes';
 import bcrypt from 'bcryptjs';
 import { authenticate } from '../middlewares/auth';
 import { prisma } from '../config/database';
+import { providers as seedProviders, accommodations as seedAccommodations } from '../../prisma/seed-data';
 
 const router = Router();
 
@@ -90,27 +91,24 @@ router.post('/seed', async (_req, res, next) => {
       { eventId: event2.id, email: 'elise@email.com', firstName: 'Élise', lastName: 'Roux', status: 'MAYBE' as const },
     ]) await prisma.guest.create({ data: g });
 
-    const providers = await Promise.all([
-      prisma.provider.create({ data: { name: 'Traiteur Gastronome', category: 'Traiteur', description: 'Traiteur haut de gamme.', email: 'contact@traiteurgastronome.com', phone: '+33111111111', city: 'Paris', priceRange: '€€€', rating: 4.8, image: 'https://images.unsplash.com/photo-1555244162-803834f70033?w=800&q=80' } }),
-      prisma.provider.create({ data: { name: 'Photographe Créatif', category: 'Photographe', description: 'Photographe professionnel.', email: 'bonjour@photographecreatif.com', phone: '+33122222222', city: 'Lyon', priceRange: '€€', rating: 4.6, image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&q=80' } }),
-      prisma.provider.create({ data: { name: 'Orchestre Symphonia', category: 'Musicien', description: 'Orchestre de musique classique.', email: 'contact@symphonia.com', phone: '+33133333333', city: 'Marseille', priceRange: '€€€', rating: 4.9, image: 'https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=800&q=80' } }),
-      prisma.provider.create({ data: { name: 'DJ ElectroMix', category: 'DJ', description: 'DJ professionnel pour animer vos soirées.', email: 'dj@electromix.com', phone: '+33144444444', city: 'Bordeaux', priceRange: '€€', rating: 4.5, image: 'https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=800&q=80' } }),
-      prisma.provider.create({ data: { name: 'Fleuriste Art floral', category: 'Décoration', description: 'Création florale pour tous vos événements.', email: 'contact@artfloral.com', phone: '+33155555555', city: 'Toulouse', priceRange: '€€', rating: 4.7, image: 'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=800&q=80' } }),
-    ]);
+    const providers = await Promise.all(
+      seedProviders.map(p => prisma.provider.create({ data: p }))
+    );
+    console.log(`✅ ${providers.length} prestataires créés`);
 
-    await Promise.all([
-      prisma.accommodation.create({ data: { name: 'Château de la Loire', type: 'Château', description: 'Magnifique château du XVIIIe siècle.', address: '15 Rue du Château', city: 'Tours', postalCode: '37000', capacity: 200, pricePerNight: 5000, image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80', amenities: 'Parking, Piscine, Jardin, Salle de réception' } }),
-      prisma.accommodation.create({ data: { name: 'Salle des Étoiles', type: 'Salle de réception', description: 'Grande salle modulable avec vue panoramique.', address: '10 Avenue de la Grande Armée', city: 'Paris', postalCode: '75017', capacity: 400, pricePerNight: 3000, image: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&q=80', amenities: 'Sonorisation, Scène, Cuisine, Climatisation' } }),
-      prisma.accommodation.create({ data: { name: 'Villa Méditerranée', type: 'Villa', description: 'Villa contemporaine avec piscine à débordement.', address: '25 Chemin des Criques', city: 'Nice', postalCode: '06000', capacity: 80, pricePerNight: 2000, image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80', amenities: 'Piscine, Terrasse, BBQ, Parking' } }),
-    ]);
+    await Promise.all(
+      seedAccommodations.map(a => prisma.accommodation.create({ data: a }))
+    );
+    console.log(`✅ ${seedAccommodations.length} hébergements créés`);
 
-    const p = (cat: string) => providers.find(x => x.category === cat)!;
+    const byName = (name: string) => providers.find(x => x.name === name)!;
+    const byCat = (cat: string) => providers.find(x => x.category === cat)!;
     await Promise.all([
-      prisma.booking.create({ data: { providerId: p('Traiteur').id, eventId: event1.id, date: new Date('2025-06-15'), status: 'CONFIRMED', price: 8500, notes: 'Menu dégustation 5 services' } }),
-      prisma.booking.create({ data: { providerId: p('Photographe').id, eventId: event1.id, date: new Date('2025-06-15'), status: 'CONFIRMED', price: 2500 } }),
-      prisma.booking.create({ data: { providerId: p('DJ').id, eventId: event2.id, date: new Date('2025-09-20'), status: 'CONFIRMED', price: 1800 } }),
-      prisma.booking.create({ data: { providerId: p('Musicien').id, eventId: event1.id, date: new Date('2025-06-15'), status: 'PENDING', price: 4500 } }),
-      prisma.booking.create({ data: { providerId: p('Décoration').id, eventId: event2.id, date: new Date('2025-09-21'), status: 'CONFIRMED', price: 1200 } }),
+      prisma.booking.create({ data: { providerId: byName('Maison Lenôtre').id, eventId: event1.id, date: new Date('2025-06-15'), status: 'CONFIRMED', price: 8500, notes: 'Menu dégustation 5 services' } }),
+      prisma.booking.create({ data: { providerId: byName('Studio Harcourt Paris').id, eventId: event1.id, date: new Date('2025-06-15'), status: 'CONFIRMED', price: 2500 } }),
+      prisma.booking.create({ data: { providerId: byCat('Musicien / DJ').id, eventId: event2.id, date: new Date('2025-09-20'), status: 'CONFIRMED', price: 1800 } }),
+      prisma.booking.create({ data: { providerId: byName('Orchestre Ego').id, eventId: event1.id, date: new Date('2025-06-15'), status: 'PENDING', price: 4500 } }),
+      prisma.booking.create({ data: { providerId: byName('Agence Flore').id, eventId: event2.id, date: new Date('2025-09-21'), status: 'CONFIRMED', price: 1200 } }),
     ]);
 
     const accoms = await prisma.accommodation.findMany();
