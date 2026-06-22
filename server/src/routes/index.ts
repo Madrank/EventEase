@@ -11,7 +11,7 @@ import uploadRoutes from './upload.routes';
 import bcrypt from 'bcryptjs';
 import { authenticate } from '../middlewares/auth';
 import { prisma } from '../config/database';
-import { providers as seedProviders, accommodations as seedAccommodations } from '../../prisma/seed-data';
+import { providers as seedProviders, accommodations as seedAccommodations } from '../data/seed-data';
 
 const router = Router();
 
