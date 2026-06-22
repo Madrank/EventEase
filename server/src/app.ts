@@ -33,6 +33,9 @@ app.use(cors({
 }));
 app.use(compression());
 
+// Trust proxy for Render (rate-limit needs this behind load balancers)
+app.set('trust proxy', 1);
+
 // Stripe webhook needs raw body — must be before JSON parser
 app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), paymentController.webhook.bind(paymentController));
 
